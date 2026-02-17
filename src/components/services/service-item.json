@@ -1,0 +1,22 @@
+{
+  "collectionName": "components_services_service_items",
+  "info": {
+    "displayName": "ServiceItem"
+  },
+  "options": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "blocks",
+      "required": true
+    },
+    "icon": {
+      "type": "string",
+      "required": false
+    }
+  },
+  "config": {}
+}
