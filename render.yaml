@@ -1,0 +1,59 @@
+# Blueprint de referencia para el Strapi de Connecting Words MC.
+#
+# Lo importante que documenta este archivo: la base de datos NO puede ser
+# SQLite. El disco de Render es efimero y se borra en cada despliegue o
+# reinicio, y con el se pierden el contenido y los permisos del rol publico.
+# Eso es lo que hoy hace que /api/home devuelva 403.
+services:
+  - type: web
+    name: strapi-cwmc
+    runtime: node
+    plan: starter
+    region: oregon
+    branch: main
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /_health
+    envVars:
+      - key: NODE_VERSION
+        value: 22.20.0
+      - key: NODE_ENV
+        value: production
+      - key: HOST
+        value: 0.0.0.0
+
+      # --- Base de datos: Postgres gestionado (Neon), nunca SQLite ---------
+      - key: DATABASE_CLIENT
+        value: postgres
+      - key: DATABASE_SSL
+        value: "true"
+      # DATABASE_URL se copia desde Neon. Se define en el panel, no aqui.
+      - key: DATABASE_URL
+        sync: false
+
+      # --- Origenes permitidos --------------------------------------------
+      # Sin esto Strapi acepta peticiones de cualquier dominio.
+      - key: CORS_ORIGIN
+        value: https://connectingwordsmc.com,https://www.connectingwordsmc.com
+
+      # --- Secretos: se generan una vez y se guardan en el panel -----------
+      - key: APP_KEYS
+        sync: false
+      - key: API_TOKEN_SALT
+        sync: false
+      - key: ADMIN_JWT_SECRET
+        sync: false
+      - key: TRANSFER_TOKEN_SALT
+        sync: false
+      - key: ENCRYPTION_KEY
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+
+      # --- Cloudinary: el plugin de subidas lo exige al arrancar -----------
+      - key: CLOUDINARY_NAME
+        sync: false
+      - key: CLOUDINARY_KEY
+        sync: false
+      - key: CLOUDINARY_SECRET
+        sync: false
