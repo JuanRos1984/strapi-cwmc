@@ -1,5 +1,11 @@
 # Blueprint de referencia para el Strapi de Connecting Words MC.
 #
+# Este es el unico servicio de pago del proyecto. Ademas del gestor de
+# contenido, aloja el endpoint del formulario de contacto de la landing:
+# la landing es un sitio estatico y no puede ejecutar codigo de servidor,
+# asi que necesita un sitio siempre encendido al otro lado. Por eso este
+# servicio no puede quedarse en el plan gratuito.
+#
 # Lo importante que documenta este archivo: la base de datos NO puede ser
 # SQLite. El disco de Render es efimero y se borra en cada despliegue o
 # reinicio, y con el se pierden el contenido y los permisos del rol publico.
@@ -48,6 +54,17 @@ services:
       - key: ENCRYPTION_KEY
         sync: false
       - key: JWT_SECRET
+        sync: false
+
+      # --- Formulario de contacto de la landing ----------------------------
+      # El destinatario sale de aqui y nunca del navegador.
+      - key: CONTACT_TO_EMAIL
+        value: info@connectingwordsmc.com
+      # Remitente verificado en Resend. Va en el subdominio de envio, no en
+      # la raiz: la raiz la ocupa el SPF de Migadu.
+      - key: FROM_EMAIL
+        value: no-reply@send.connectingwordsmc.com
+      - key: RESEND_API_KEY
         sync: false
 
       # --- Cloudinary: el plugin de subidas lo exige al arrancar -----------
