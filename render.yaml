@@ -62,6 +62,10 @@ services:
         value: info@connectingwordsmc.com
       # Remitente verificado en Resend. Va en el subdominio de envio, no en
       # la raiz: la raiz la ocupa el SPF de Migadu.
+      # Nombre para mostrar del remitente. Sin esto el correo llega como
+      # "no-reply" en la bandeja del cliente.
+      - key: FROM_NAME
+        value: Connecting Words MC
       - key: FROM_EMAIL
         value: no-reply@send.connectingwordsmc.com
       - key: RESEND_API_KEY

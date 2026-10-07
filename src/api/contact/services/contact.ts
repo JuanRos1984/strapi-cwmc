@@ -87,6 +87,12 @@ export async function sendContactEmail(data: ContactFormData): Promise<SendResul
     return { success: false, error: 'Contact form is not configured' };
   }
 
+  // Sin nombre para mostrar, el gestor de correo enseña lo que haya antes de
+  // la arroba: "no-reply". Con el, aparece la empresa.
+  // Si FROM_EMAIL ya viniera en formato "Nombre <correo>", se respeta tal cual.
+  const fromName = process.env.FROM_NAME ?? 'Connecting Words MC';
+  const from = fromEmail.includes('<') ? fromEmail : `${fromName} <${fromEmail}>`;
+
   const safeName = escapeHtml(data.name);
   const safeEmail = escapeHtml(data.email);
   const safeMessage = escapeHtml(data.message).replace(/\n/g, '<br>');
@@ -121,7 +127,7 @@ export async function sendContactEmail(data: ContactFormData): Promise<SendResul
     const resend = new Resend(apiKey);
 
     const { error } = await resend.emails.send({
-      from: fromEmail,
+      from,
       to: [toEmail],
       subject: `Nuevo mensaje de contacto de ${data.name}`.slice(0, 180),
       html,
